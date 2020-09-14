@@ -1,8 +1,10 @@
+import fetch, { Headers } from "node-fetch";
 
-const NICO2_API_ENDPOINT_VIDEO = "https://api.search.nicovideo.jp/api/v2/video/contents/search";
-const NICO2_API_ENDPOINT_LIVE = "https://api.search.nicovideo.jp/api/v2/live/contents/search";
+export const NICO2_API_ENDPOINT_VIDEO = "https://api.search.nicovideo.jp/api/v2/video/contents/search";
+export const NICO2_API_ENDPOINT_LIVE = "https://api.search.nicovideo.jp/api/v2/live/contents/search";
+const USER_AGRNT = "nico2searchLib(twitter @ytg_vip)";
 
-type field_val =
+export type field_val =
     "contentId" |
     "title" |
     "description" |
@@ -25,7 +27,7 @@ type field_val =
 /**
  * niconico search query interface
  */
-interface nico2Query {
+export interface nico2Query {
     q: string
     targets: string
     fields?: Array<field_val>
@@ -37,7 +39,7 @@ interface nico2Query {
     _context: string
 };
 
-interface videoField {
+export interface videoField {
     "contentId": string
     "title": string
     "description": string
@@ -59,11 +61,15 @@ interface videoField {
     "genre.keyword": string
 }
 
-class nico2test {
-    private _query: nico2Query;
+export class nico2test {
+    public query: nico2Query;
+    public header: Headers;
 
     constructor(query: nico2Query) {
-        this._query = {
+        this.header = new Headers();
+        this.header.append('User-Agent', USER_AGRNT);
+
+        this.query = {
             q: query.q,
             targets: query.targets,
             fields: query.fields,
@@ -75,4 +81,30 @@ class nico2test {
             _context: query._context
         };
     };
+
+    getQuery(): string {
+        let res = `?q=${this.query.q}`;
+        res += `&targets=${this.query.targets}`
+        res += `&_sort=${this.query._sort}`
+        res += `&_context=${this.query._context}`
+        return res;
+    }
+
+    async getContent() {
+        let url = NICO2_API_ENDPOINT_VIDEO + this.getQuery();
+        let res = await fetch(url, { headers: this.header });
+        let json = await res.json();
+        console.log(url)
+        console.log(json);
+    }
 }
+
+let a: nico2Query = {
+    q: "初音ミク",
+    targets: "title",
+    _sort: "-viewCounter",
+    _context: "tsStudy(twitter@ytg_vip)"
+};
+
+let test = new nico2test(a);
+test.getContent();
