@@ -1,0 +1,11 @@
+{
+  "name": "nico2-search-api",
+  "version": "0.0.0",
+  "description": "niconico contents serach api",
+  "main": "app.js",
+  "author": "yotsugi",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^4.0.2"
+  }
+}
