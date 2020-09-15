@@ -92,6 +92,7 @@ export class nico2test {
 
     async getContent() {
         let url = NICO2_API_ENDPOINT_VIDEO + this.getQuery();
+        url = encodeURI(url);
         let res = await fetch(url, { headers: this.header });
         let json = await res.json();
         console.log(url)
