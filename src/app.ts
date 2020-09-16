@@ -1,64 +1,11 @@
 import fetch, { Headers } from "node-fetch";
+import { IResponse, nico2Query } from "./@types/video";
 
 export const NICO2_API_ENDPOINT_VIDEO = "https://api.search.nicovideo.jp/api/v2/video/contents/search";
 export const NICO2_API_ENDPOINT_LIVE = "https://api.search.nicovideo.jp/api/v2/live/contents/search";
 const USER_AGRNT = "nico2searchLib(twitter @ytg_vip)";
 
-/**
- * niconico search query interface
- */
-export interface nico2Query {
-    /**
-     * 検索キーワード
-     */
-    q: string
-
-    /**
-     * 検索対象のフィールド
-     */
-    targets: TVideoFields
-
-    /**
-     * レスポンスに必要なフィールド
-     */
-    fields?: Array<TVideoCanGetFields>
-
-    /**
-     * フィルタ
-     */
-    filters?: string
-
-    /**
-     * 複雑な条件を指定する際のフィルタ
-     */
-    jsonFilter?: string
-
-    /**
-     * ソートする対象、方向
-     */
-    _sort: TVideoCanSort
-
-    /**
-     * 取得コンテンツオフセット  
-     * default : 0  
-     * max : 1600  
-     */
-    _offset?: number
-
-    /**
-     * 取得コンテンツ最大数  
-     * default : 10  
-     * max : 100  
-     */
-    _limit?: number
-
-    /**
-     * サービス、アプリケーション名  
-     * 最大40文字
-     */
-    _context: string
-};
-
+/** niconico search query interface */
 export class nico2test {
     public query: nico2Query;
     public header: Headers;
@@ -80,9 +27,7 @@ export class nico2test {
         };
     };
 
-    /**
-     * クエリを連結する
-     */
+    /** クエリを連結する */
     makeQuery(): string {
         let res = `?q=${this.query.q}`;
         res += `&targets=${this.query.targets}`
@@ -102,14 +47,16 @@ export class nico2test {
         return res;
     }
 
-    async getContent() {
+
+    /** コンテンツ取得関数 */
+    async getContents(): Promise<IResponse> {
         let url = NICO2_API_ENDPOINT_VIDEO + this.makeQuery();
         console.log(url);
         url = encodeURI(url);
         console.log(url);
         let res = await fetch(url, { headers: this.header });
-        let json = await res.json();
-        console.log(json);
+        let json: IResponse = await res.json();
+        return json;
     }
 
     /**
@@ -157,10 +104,15 @@ let a: nico2Query = {
     q: nico2test.getQ(["初音ミク", "ボーカル"], undefined, ["歌ってみた"]),
     targets: "title",
     fields: ["title", "description", "tags", "viewCounter"],
-    _sort: "-viewCounter",
+    _sort: "+viewCounter",
     _limit: 10,
-    _context: "tsStudy(twitter@ytg_vip)"
+    _context: USER_AGRNT
 };
 
 let test = new nico2test(a);
-test.getContent();
+test.getContents().then(val => {
+    console.log(val);
+    val.data.map((val, i) => {
+        console.log(`${i}: ${val.title} 再生回数:${val.viewCounter} タグ:${val.tags}`);
+    });
+});
