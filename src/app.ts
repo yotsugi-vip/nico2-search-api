@@ -4,62 +4,20 @@ export const NICO2_API_ENDPOINT_VIDEO = "https://api.search.nicovideo.jp/api/v2/
 export const NICO2_API_ENDPOINT_LIVE = "https://api.search.nicovideo.jp/api/v2/live/contents/search";
 const USER_AGRNT = "nico2searchLib(twitter @ytg_vip)";
 
-export type field_val =
-    "contentId" |
-    "title" |
-    "description" |
-    "userId" |
-    "viewCounter" |
-    "mylistCounter" |
-    "lengthSeconds" |
-    "thumbnailUrl" |
-    "startTime" |
-    "threadId" |
-    "commentCounter" |
-    "lastCommentTime" |
-    "categoryTags" |
-    "channelId" |
-    "tags" |
-    "tagsExact" |
-    "lockTagsExact" |
-    "genre" |
-    "genre.keyword";
 /**
  * niconico search query interface
  */
 export interface nico2Query {
     q: string
-    targets: string
-    fields?: Array<field_val>
+    targets: TVideoFields
+    fields?: Array<TVideoCanGetFields>
     filters?: string
     jsonFilter?: string
-    _sort: string
+    _sort: TVideoCanSort
     _offset?: number
     _limit?: number
     _context: string
 };
-
-export interface videoField {
-    "contentId": string
-    "title": string
-    "description": string
-    "userId": string
-    "viewCounter": number
-    "mylistCounter": number
-    "lengthSeconds": number
-    "thumbnailUrl": string
-    "startTime": string
-    "threadId": number
-    "commentCounter": number
-    "lastCommentTime": string
-    "categoryTags": string
-    "channelId": number
-    "tags": string
-    "tagsExact": string
-    "lockTagsExact": string
-    "genre": string
-    "genre.keyword": string
-}
 
 export class nico2test {
     public query: nico2Query;
