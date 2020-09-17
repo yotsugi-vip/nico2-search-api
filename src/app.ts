@@ -1,5 +1,5 @@
 import fetch, { Headers } from "node-fetch";
-import { IResponse, nico2Query } from "./@types/video";
+import { IResponse, IVideoField, nico2Query } from "./@types/video";
 
 export const NICO2_API_ENDPOINT_VIDEO = "https://api.search.nicovideo.jp/api/v2/video/contents/search";
 export const NICO2_API_ENDPOINT_LIVE = "https://api.search.nicovideo.jp/api/v2/live/contents/search";
@@ -56,6 +56,33 @@ export class nico2test {
         console.log(url);
         let res = await fetch(url, { headers: this.header });
         let json: IResponse = await res.json();
+
+        if (json.meta.status !== 200) {
+            // コンテンツ取得失敗時、空データを詰める
+            Object.assign(json, json, {
+                data: [{
+                    "contentId": "",
+                    "title": "",
+                    "description": "",
+                    "userId": 0,
+                    "viewCounter": 0,
+                    "mylistCounter": 0,
+                    "lengthSeconds": 0,
+                    "thumbnailUrl": 0,
+                    "startTime": "",
+                    "threadId": 0,
+                    "commentCounter": 0,
+                    "lastCommentTime": "",
+                    "categoryTags": "",
+                    "channelId": 0,
+                    "tags": "",
+                    "tagsExact": "",
+                    "lockTagsExact": "",
+                    "genre": "",
+                    "genre.keyword": ""
+                }]
+            });
+        }
         return json;
     }
 
@@ -106,7 +133,7 @@ let a: nico2Query = {
     fields: ["title", "description", "tags", "viewCounter"],
     _sort: "+viewCounter",
     _limit: 10,
-    _context: USER_AGRNT
+    _context: USER_AGRNT,
 };
 
 let test = new nico2test(a);
