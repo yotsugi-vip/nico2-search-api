@@ -44,6 +44,10 @@ export class nico2test {
             });
         }
 
+        if (this.query.filters) {
+            
+        }
+        
         return res;
     }
 
@@ -131,12 +135,14 @@ let a: nico2Query = {
     q: nico2test.getQ(["初音ミク", "ボーカル"], undefined, ["歌ってみた"]),
     targets: "title",
     fields: ["title", "description", "tags", "viewCounter"],
-    _sort: "+viewCounter",
+    _sort: "-viewCounter",
     _limit: 10,
     _context: USER_AGRNT,
+    filters: { viewCounter: { gte: 10000000 } }
 };
 
 let test = new nico2test(a);
+
 test.getContents().then(val => {
     console.log(val);
     val.data.map((val, i) => {
