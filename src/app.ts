@@ -45,9 +45,8 @@ export class nico2test {
         }
 
         if (this.query.filters) {
-            
         }
-        
+
         return res;
     }
 
@@ -57,6 +56,8 @@ export class nico2test {
         let url = NICO2_API_ENDPOINT_VIDEO + this.makeQuery();
         console.log(url);
         url = encodeURI(url);
+        url = url.replace('+', '%2B');
+
         console.log(url);
         let res = await fetch(url, { headers: this.header });
         let json: IResponse = await res.json();
@@ -135,7 +136,7 @@ let a: nico2Query = {
     q: nico2test.getQ(["初音ミク", "ボーカル"], undefined, ["歌ってみた"]),
     targets: "title",
     fields: ["title", "description", "tags", "viewCounter"],
-    _sort: "-viewCounter",
+    _sort: "+viewCounter",
     _limit: 10,
     _context: USER_AGRNT,
     filters: { viewCounter: { gte: 10000000 } }
